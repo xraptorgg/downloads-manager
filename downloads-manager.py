@@ -1,3 +1,5 @@
+import os
+from os.path import splitext, exists, join
 import shutil
 import time
 from watchdog.observers import Observer
@@ -10,7 +12,6 @@ image_dir = "C:\\Users\\xshay\\Downloads\\Images"
 document_dir = "C:\\Users\\xshay\\Downloads\\Documents"
 software_dir = "C:\\Users\\xshay\\Downloads\\Softwares"
 iso_dir = "C:\\Users\\xshay\\Downloads\\ISOs"
-other_dir = "C:\\Users\\xshay\\Downloads\\Others"
 
 # File extensions
 image_extensions = [".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".png", ".gif", ".webp", ".tiff", ".tif", ".psd", ".raw", ".arw", ".cr2", ".nrw", ".k25", ".bmp", ".dib", ".heif", ".heic", ".ind", ".indd", ".indt", ".jp2", ".j2k", ".jpf", ".jpf", ".jpx", ".jpm", ".mj2", ".svg", ".svgz", ".ai", ".eps", ".ico"]
@@ -19,34 +20,61 @@ document_extensions = [".doc", ".docx", ".odt", ".pdf", ".xls", ".xlsx", ".ppt",
 software_extensions = [".exe", ".msi"]
 iso_extensions = [".iso", ".rar"]
 
+# Check for duplicate file
+def duplicate(name, destination):
+    f_name, ext = splitext(name);
+    name = f"{name}1{ext}"
+    return name
+
 # Function to move files
-def move(source, destination):
-    shutil.move(source, destination)
+def move(filee, destination, name):
+    if exists(f"{destination}/{name}"):
+        uniq_name = duplicate(name, destination)
+        old_name = join(destination, name)
+        new_name = join(destination, uniq_name)
+        rename(old_name, new_name)
+    shutil.move(filee, destination)
+
+# Function to be called when a file is downloaded
+class Handler(FileSystemEventHandler):
+    def on_modified(self, event):
+        with os.scandir(path) as files:
+            for filee in files:
+                name = filee.name
+                self.check_image(filee, name)
+                self.check_video(filee, name)
+                self.check_document(filee, name)
+                self.check_software(filee, name)
+                self.check_iso(filee, name)
+
+    def check_image(self, filee, name):
+        for image_extension in image_extensions:
+            if name.endswith(image_extension) or name.endswith(image_extension.upper()):
+                move(filee, image_dir, name)
+    def check_video(self, filee, name):
+        for video_extension in video_extensions:
+            if name.endswith(video_extension) or name.endswith(video_extension.upper()):
+                move(filee, video_dir, name)
+    def check_document(self, filee, name):
+        for document_extension in document_extensions:
+            if name.endswith(document_extension) or name.endswith(document_extension.upper()):
+                move(filee, document_dir, name)
+    def check_software(self, filee, name):
+        for software_extension in software_extensions:
+            if name.endswith(software_extension) or name.endswith(software_extension.upper()):
+                move(filee, software_dir, name)
+    def check_iso(self, filee, name):
+        for iso_extension in iso_extensions:
+            if name.endswith(iso_extension) or name.endswith(iso_extension.upper()):
+                move(filee, iso_dir, name)
 
 # Event handler
-the_event_handler = FileSystemEventHandler()
+the_event_handler = Handler()
 
 # Observer
 the_observer = Observer()
-the_observer.schedule(the_event_handler, path, recursive=False)
+the_observer.schedule(the_event_handler, path, recursive=True)
 
-# Function to be called when a file is downloaded
-def on_created(event):
-    if event.src_path.endswith in image_extensions:
-        move(event.src_path, image_dir)
-    elif event.src_path.endswith in video_extensions:
-        move(event.src_path, video_dir)
-    elif event.src_path.endswith in document_extensions:
-        move(event.src_path, document_dir)
-    elif event.src_path.endswith in software_extensions:
-        move(event.src_path, software_dir)
-    elif event.src_path.endswith in iso_extensions:
-        move(event.src_path, iso_dir)
-    else:
-        move(event.src_path, other_dir)
-
-# Calls function when a file is downloaded
-the_event_handler.on_created = on_created
 
 # Starting the observer
 the_observer.start()
