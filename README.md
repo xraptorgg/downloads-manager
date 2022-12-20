@@ -6,7 +6,7 @@ Organizes files in the specified directory (and its subdirectories) according to
 
 ## How to run
 
-python3 main.py <directory path>
+`python3 main.py <directory path>`
 
 ## Purpose
 
