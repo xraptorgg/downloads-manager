@@ -1,18 +1,12 @@
-# downloads-manager
+# File Organizer
 
-A python program that removes clutter in Downloads folder by organizing files based on their file type. It uses `os` module, `shutil` module, `watchdog` module. Both `os` and `shutil` modules come under Python’s standard utility modules. The `watchdog` module monitors the specified directory and can notify if a file is created or changed. 
+A simple file organizer written in Python3.
 
-![Downloads Manager program in action](https://cdn.discordapp.com/attachments/954319966444851200/1001853539078906068/unknown.png)
+Organizes files in the specified directory (and its subdirectories) according to their extensions. 
 
 ## How to run
 
-First we need to install the `watchdog` module. Run the following command in the terminal
-
-```pip install watchdog```
-
-Then open the ```.py``` file in any text editor and modify the source path and the destination paths
-
-Run the program
+python3 main.py <directory path>
 
 ## Purpose
 
